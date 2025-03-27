@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private KeyCode leftInpt, RightInput;
+    [SerializeField] private KeyCode leftInput, rightInput, leftInput2, rightInput2;
     [SerializeField] private float acceleration = 100, turnspeed = 100, minSpeed = 0, maxSpeed = 500, minAcceleration = 200, maxAcceleration = 500;
     [SerializeField] private LayerMask groundLayers;
     [SerializeField] private Transform groundTransform;
+    [SerializeField] private TakeDamage takeDamage;
     private float speed = 0;
     private Rigidbody rb;
     private Animator animator;
@@ -17,22 +18,23 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
         bool isGrounded = Physics.Linecast(transform.position, groundTransform.position, groundLayers);
-        if (isGrounded)
+        if (isGrounded && !takeDamage.isHurt)
         {
             float currentY = transform.eulerAngles.y;
             if (currentY > 180) currentY -= 360;
 
-            if (Input.GetKey(leftInpt) && currentY < 89)
+            if (Input.GetKey(leftInput) && currentY < 89 || Input.GetKey(leftInput2) && currentY < 89)
             {
                 transform.Rotate(new Vector3(0, turnspeed * Time.deltaTime, 0), Space.Self);
             }
-            if (Input.GetKey(RightInput) && currentY > -89)
+            if (Input.GetKey(rightInput) && currentY > -89 || Input.GetKey(rightInput2) && currentY > -89)
             {
                 transform.Rotate(new Vector3(0, -turnspeed * Time.deltaTime, 0), Space.Self);
             }
@@ -50,6 +52,10 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (takeDamage.isHurt)
+        {
+            return;
+        }
         float angle = Mathf.Abs(Mathf.DeltaAngle(transform.eulerAngles.y, 0));
         acceleration = Remap(0, 90, maxAcceleration, minAcceleration, angle);
         speed +=  acceleration * Time.fixedDeltaTime;
