@@ -18,4 +18,6 @@ public class PlayerEvents : MonoBehaviour
         PlayerEvents.CallOnHitEvent();
         Debug.Log("Player hit " + name);
     }
+
+
 }
