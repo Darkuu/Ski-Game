@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EndRace : MonoBehaviour
 {
+   
+
 
     private void OnTriggerEnter(Collider other)
     {
